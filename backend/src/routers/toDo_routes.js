@@ -1,6 +1,6 @@
 import express from 'express';
-import * as ToDo from '../controllers/toDo_controller'
-import { authenticate } from '../middleware/auth';
+import * as ToDo from '../controllers/toDo_controller.js'
+import { authenticate } from '../middleware/auth.js';
 
 const toDo_router = express.Router();
 

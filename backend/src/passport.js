@@ -1,9 +1,14 @@
-
 import passport from 'passport'
 import GoogleStrategy from 'passport-google-oauth2';
-import { db } from './db';
+import { db } from './db.js';
 
-
+// Verify Google OAuth credentials are present
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    console.error('Environment variables not found in passport.js:');
+    console.error('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID);
+    console.error('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET);
+    throw new Error('Missing required environment variables: GOOGLE_CLIENT_ID and/or GOOGLE_CLIENT_SECRET');
+}
 
 passport.use("google",new GoogleStrategy({ // login with google 
     clientID: process.env.GOOGLE_CLIENT_ID,

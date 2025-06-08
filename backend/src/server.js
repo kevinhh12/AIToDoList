@@ -1,10 +1,15 @@
+import 'dotenv/config';  // This must be the absolute first import
 import express from 'express';
-import login_router from './routers/login_routes'
-import toDo_router from './routers/toDo_routes'
-import passport from './passport';
+import login_router from './routers/login_routes.js'
+import toDo_router from './routers/toDo_routes.js'
+import passport from './passport.js';
 import session from 'express-session'
 import cors from 'cors';
-import helmet from 'helmet';
+
+// Debug logging to verify environment variables
+console.log('Server starting with environment variables:');
+console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'exists' : 'missing');
+console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'exists' : 'missing');
 
 const app = express();
 const port = 3000;
