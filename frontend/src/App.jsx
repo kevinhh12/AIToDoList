@@ -1,12 +1,37 @@
-import { useState } from 'react'
+import { AppSidebar } from "@/components/app-sidebar"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 
-
+import UsrProfile from './components/app-user'
+import {SiteHeader} from './components/app-siteHeader'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <h1 className='text-amber-200'>Hello</h1>
+    <div className="flex min-h-screen">
+      <SidebarProvider
+        style={{ 
+          "--sidebar-width": "24rem", // 384px - equivalent to w-96 It adjusted the sidebar size
+          "--sidebar-width-icon": "4rem", // 64px
+        }}
+      >
+        <AppSidebar />
+        
+        <SidebarInset>
+          <div className="flex justify-between items-center p-1">
+            <SiteHeader/>
+           
+            
+          </div>
+          
+        </SidebarInset>
+
+      </SidebarProvider>
+
+    
+    </div>
   )
 }
 
