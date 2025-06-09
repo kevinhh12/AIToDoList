@@ -32,11 +32,30 @@ login_router.get('/auth/status', (req, res) => {
 
 // Logout route
 login_router.post('/auth/logout', (req, res) => {
+    console.log('Logout initiated for user:', req.user ? req.user.id : 'N/A');
     req.logout((err) => {
         if (err) {
-            return res.status(500).json({ error: 'Logout failed' });
+            console.error('Logout error:', err);
+            return res.status(500).json({ error: 'Logout failed', details: err.message });
         }
-        res.status(200).json({ message: 'Logged out successfully' });
+        console.log('User logged out successfully. Session destroyed.');
+        // Explicitly destroy the session on the server-side
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Error destroying session:', err);
+                return res.status(500).json({ error: 'Failed to destroy session', details: err.message });
+            }
+            console.log('Session explicitly destroyed.');
+
+            // Clear the session cookie from the client's browser with explicit options
+            res.clearCookie('connect.sid', {
+                path: '/',
+                secure: process.env.NODE_ENV === 'production', // Match server.js setting
+                sameSite: 'lax' // Match server.js setting
+            }); 
+
+            res.status(200).json({ message: 'Logged out successfully' });
+        });
     });
 });
 

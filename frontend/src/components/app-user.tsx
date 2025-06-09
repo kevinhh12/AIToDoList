@@ -36,6 +36,7 @@ export default function UsrProfile(){
             
             if (response.status === 200) {
                 const user = response.data
+                console.log(user) // testing
                 setUserData(user)
                 setIsLoggedIn(true)
             } else {
@@ -56,19 +57,23 @@ export default function UsrProfile(){
 
     const handleLogout = async () => {
         try {
-            const response = await axios.post('http://localhost:3000/login/auth/logout', {
-                withCredentials: true
-            })
+            const response = await axios.post(
+                'http://localhost:3000/login/auth/logout',
+                {}, // empty body
+                { withCredentials: true } // this is the config
+              );
             
             if (response.status === 200) {
+                console.log('Logout successful on client side. Updating state...');
                 setIsLoggedIn(false)
                 setUserData(null)
+                checkLoginStatus() // Re-check status after logout
             }
         } catch (error) {
             console.error('Error logging out:', error)
         }
     }
-    console.log(userData?.picture)
+
 
     return(
         <DropdownMenu>
@@ -79,9 +84,9 @@ export default function UsrProfile(){
                             
                             <AvatarImage src={userData.picture} alt={userData.name} />
                         ) : (
-                            <AvatarFallback className="bg-muted">
-                                <User className="h-4 w-4" />
-                            </AvatarFallback>
+                            <div className="flex items-center justify-center h-full w-full">
+                                <User/>
+                            </div>
                         )}
                     </Avatar>
                 </div>
