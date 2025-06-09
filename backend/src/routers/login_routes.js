@@ -10,7 +10,7 @@ login_router.get('/auth/google',
 
 login_router.get('/auth/google/main',
     passport.authenticate('google', { 
-        failureRedirect: '/login',
+        failureRedirect: 'http://localhost:5173',
         successRedirect: 'http://localhost:5173'
     })
 );
