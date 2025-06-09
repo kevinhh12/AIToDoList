@@ -9,70 +9,80 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { User, Settings, LogOut, LogIn, UserPlus } from "lucide-react"
 import { useEffect, useState } from "react"
+import axios from 'axios';
+
+interface UserData {
+    id: string
+    name: string
+    email: string
+    picture: string
+}
 
 export default function UsrProfile(){
-    // State for login status
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [userData, setUserData] = useState<UserData | null>(null)
 
-    // useEffect to handle login status changes
+    // Check login status on mount
     useEffect(() => {
-        // Check if user is logged in (replace with your actual auth logic)
-        const checkLoginStatus = () => {
-            // Example: check localStorage, cookies, or auth context
-            const token = localStorage.getItem('authToken')
-            const userData = localStorage.getItem('userData')
+        checkLoginStatus()
+    }, [])
+
+    const checkLoginStatus = async () => {
+        try {
+            // Check if user is authenticated with your backend
+            const response = await axios.get('http://localhost:3000/login/auth/status', {
+                withCredentials: true // Include cookies
+            })
             
-            if (token && userData) {
+            if (response.status === 200) {
+                const user = response.data
+                setUserData(user)
                 setIsLoggedIn(true)
             } else {
                 setIsLoggedIn(false)
+                setUserData(null)
             }
-        }
-
-        // Check on component mount
-        checkLoginStatus()
-
-        // Listen for storage changes (if using localStorage)
-        const handleStorageChange = () => {
-            checkLoginStatus()
-        }
-
-        window.addEventListener('storage', handleStorageChange)
-
-        // Cleanup
-        return () => {
-            window.removeEventListener('storage', handleStorageChange)
-        }
-    }, [])
-
-    // Function to handle login/logout (for testing)
-    const handleLoginToggle = () => {
-        if (isLoggedIn) {
-            // Logout
-            localStorage.removeItem('authToken')
-            localStorage.removeItem('userData')
+        } catch (error) {
+            console.error('Error checking auth status:', error)
             setIsLoggedIn(false)
-        } else {
-            // Login
-            localStorage.setItem('authToken', 'fake-token')
-            localStorage.setItem('userData', JSON.stringify({ name: 'Test User', email: 'test@example.com' }))
-            setIsLoggedIn(true)
+            setUserData(null)
         }
     }
+
+    const handleGoogleLogin = () => {
+        // Redirect to your backend's Google OAuth endpoint
+        window.location.href = 'http://localhost:3000/login/auth/google'
+    }
+
+    const handleLogout = async () => {
+        try {
+            const response = await axios.post('http://localhost:3000/login/auth/logout', {
+                withCredentials: true
+            })
+            
+            if (response.status === 200) {
+                setIsLoggedIn(false)
+                setUserData(null)
+            }
+        } catch (error) {
+            console.error('Error logging out:', error)
+        }
+    }
+    console.log(userData?.picture)
 
     return(
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <div className="p-2 rounded-full hover:bg-muted cursor-pointer transition-all duration-300 ease-in-out">
-                    <Avatar>
-                        {isLoggedIn ? (
-                            <AvatarImage src="https://github.com/shadcn.png" />
+                    <Avatar className="h-8 w-8">
+                        {isLoggedIn && userData ? (
+                            
+                            <AvatarImage src={userData.picture} alt={userData.name} />
                         ) : (
-                            <AvatarFallback>
+                            <AvatarFallback className="bg-muted">
                                 <User className="h-4 w-4" />
                             </AvatarFallback>
                         )}
-                        
                     </Avatar>
                 </div>
             </DropdownMenuTrigger>
@@ -80,14 +90,14 @@ export default function UsrProfile(){
                 className="w-56" 
                 align="end" 
             >
-                {isLoggedIn ? (
+                {isLoggedIn && userData ? (
                     // Logged in user dropdown
                     <>
                         <DropdownMenuLabel>
                             <div className="flex flex-col space-y-1">
-                                <p className="text-sm font-medium leading-none">User Name</p>
+                                <p className="text-sm font-medium leading-none">{userData.name}</p>
                                 <p className="text-xs leading-none text-muted-foreground">
-                                    user@example.com
+                                    {userData.email}
                                 </p>
                             </div>
                         </DropdownMenuLabel>
@@ -101,7 +111,7 @@ export default function UsrProfile(){
                             <span>Settings</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleLoginToggle}>
+                        <DropdownMenuItem onClick={handleLogout}>
                             <LogOut className="mr-2 h-4 w-4" />
                             <span>Log out</span>
                         </DropdownMenuItem>
@@ -118,13 +128,9 @@ export default function UsrProfile(){
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleLoginToggle}>
+                        <DropdownMenuItem onClick={handleGoogleLogin}>
                             <LogIn className="mr-2 h-4 w-4" />
-                            <span>Log in</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <UserPlus className="mr-2 h-4 w-4" />
-                            <span>Sign up</span>
+                            <span>Sign in with Google</span>
                         </DropdownMenuItem>
                     </>
                 )}

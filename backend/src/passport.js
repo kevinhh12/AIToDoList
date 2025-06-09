@@ -13,7 +13,7 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
 passport.use("google",new GoogleStrategy({ // login with google 
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/auth/google/main",
+    callbackURL: "http://localhost:3000/login/auth/google/main",
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
 
 },async ( accessToken, refreshToken, profile, cb)=>{
@@ -21,6 +21,9 @@ passport.use("google",new GoogleStrategy({ // login with google
     try {
         console.log(profile);
         const username = profile.email;
+        const name = profile.displayName;
+        const picture = profile.photos && profile.photos.length > 0 ? profile.photos[0].value : null;
+
         const result = await db.query(
             'SELECT * FROM users WHERE username = $1',
             [username]
@@ -29,13 +32,18 @@ passport.use("google",new GoogleStrategy({ // login with google
         if (result.rows.length === 0) {
             // User doesn't exist, create new user
             const newUser = await db.query(
-                'INSERT INTO users (username,password_hash) VALUES ($1,$2) RETURNING *',
-                [username,'google']
+                'INSERT INTO users (username, password_hash, name, picture) VALUES ($1, $2, $3, $4) RETURNING *',
+                [username, 'google', name, picture]
             );
 
             return cb(null,newUser.rows[0])
         }
-        return cb(null, result.rows[0]);
+        // Update existing user's name and picture in case it changed on Google
+        const updatedUser = await db.query(
+            'UPDATE users SET name = $1, picture = $2 WHERE username = $3 RETURNING *',
+            [name, picture, username]
+        );
+        return cb(null, updatedUser.rows[0]);
     } catch (error) {
         return cb(error)
     }

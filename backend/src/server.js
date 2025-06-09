@@ -5,6 +5,7 @@ import toDo_router from './routers/toDo_routes.js'
 import passport from './passport.js';
 import session from 'express-session'
 import cors from 'cors';
+import { limiter } from './middleware/limiter.js';
 
 // Debug logging to verify environment variables
 console.log('Server starting with environment variables:');
@@ -14,6 +15,7 @@ console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'exists'
 const app = express();
 const port = 3000;
 
+
 // CORS configuration
 app.use(cors({
     origin: 'http://localhost:5173', // Vite's default frontend port
@@ -21,6 +23,8 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
    
 }));
+
+app.use(limiter);
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
