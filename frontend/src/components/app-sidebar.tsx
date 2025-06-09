@@ -35,60 +35,7 @@ export function AppSidebar() {
       role: 'assistant',
       timestamp: new Date()
     },
-    {
-      id: '2',
-      content: 'I can help you with coding, answer questions, or just chat!',
-      role: 'assistant',
-      timestamp: new Date()
-    },
-    {
-      id: '3',
-      content: 'What would you like to work on?',
-      role: 'user',
-      timestamp: new Date()
-    },
-    {
-      id: '4',
-      content: 'I\'d like to build a React application with TypeScript.',
-      role: 'assistant',
-      timestamp: new Date()
-    },
-    {
-      id: '5',
-      content: 'Great! I can help you with React and TypeScript. What kind of application are you thinking of building?',
-      role: 'assistant',
-      timestamp: new Date()
-    },
-    {
-      id: '6',
-      content: 'I want to build a todo list app with authentication.',
-      role: 'user',
-      timestamp: new Date()
-    },
-    {
-      id: '7',
-      content: 'Excellent choice! A todo app is perfect for learning React. We can use Firebase for authentication and a database.',
-      role: 'assistant',
-      timestamp: new Date()
-    },
-    {
-      id: '8',
-      content: 'Should I use Next.js or just plain React?',
-      role: 'user',
-      timestamp: new Date()
-    },
-    {
-      id: '9',
-      content: 'For a todo app, plain React with Vite would be perfect. Next.js is great for larger applications with server-side rendering.',
-      role: 'assistant',
-      timestamp: new Date()
-    },
-    {
-      id: '10',
-      content: 'Perfect! Let\'s start building it together.',
-      role: 'user',
-      timestamp: new Date()
-    }
+
   ])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -137,75 +84,69 @@ export function AppSidebar() {
         </CardTitle>
       </SidebarHeader>
       
-      <SidebarContent className="h-full">
-        <SidebarGroup className="h-full">
-          <SidebarGroupContent className="h-full flex-1 p-0">
-            <ScrollArea  className="flex-1">
-              <Card className="h-full flex flex-col">
-                <CardContent className="h-full flex-1 p-0 flex flex-col">
-                  
-                    <div className="p-4 space-y-4">
-                      {messages.map((message) => (
-                        <div
-                          key={message.id}
-                          className={`flex gap-3 ${
-                            message.role === 'user' ? 'justify-end' : 'justify-start'
-                          }`}
-                        >
-                          {message.role === 'assistant' && (
-                            <Avatar className="h-8 w-8">
-                              <AvatarFallback className="bg-primary text-primary-foreground">
-                                <Bot className="h-4 w-4" />
-                              </AvatarFallback>
-                            </Avatar>
-                          )}
-                          
-                          <div
-                            className={`max-w-[80%] rounded-lg p-3 ${
-                              message.role === 'user'
-                                ? 'bg-primary text-primary-foreground'
-                                : 'bg-muted'
-                            }`}
-                          >
-                            <p className="text-sm">{message.content}</p>
-                            <p className="text-xs opacity-70 mt-1">
-                              {message.timestamp.toLocaleTimeString()}
-                            </p>
-                          </div>
-                          
-                          {message.role === 'user' && (
-                            <Avatar className="h-8 w-8">
-                              <AvatarFallback className="bg-secondary">
-                                <User className="h-4 w-4" />
-                              </AvatarFallback>
-                            </Avatar>
-                          )}
-                        </div>
-                      ))}
-                      
-                      {isLoading && (
-                        <div className="flex gap-3 justify-start">
-                          <Avatar className="h-8 w-8">
-                            <AvatarFallback className="bg-primary text-primary-foreground">
-                              <Bot className="h-4 w-4" />
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="bg-muted rounded-lg p-3">
-                            <div className="flex items-center gap-2">
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                              <span className="text-sm">AI is thinking...</span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                      <div ref={endOfMessagesRef} /> 
+      <SidebarContent className="h-full flex-1">
+        <Card className="h-full flex flex-col min-h-0">
+          <CardContent className="flex-1 p-0 flex flex-col min-h-0">
+            <ScrollArea className="flex-1 min-h-0">
+              <div className="p-4 space-y-4 min-h-full">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex gap-3 ${
+                      message.role === 'user' ? 'justify-end' : 'justify-start'
+                    }`}
+                  >
+                    {message.role === 'assistant' && (
+                      <Avatar className="h-8 w-8 flex-shrink-0">
+                        <AvatarFallback className="bg-primary text-primary-foreground">
+                          <Bot className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                    
+                    <div
+                      className={`max-w-[80%] rounded-lg p-3 flex-shrink-0 ${
+                        message.role === 'user'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      <p className="text-xs opacity-70 mt-1">
+                        {message.timestamp.toLocaleTimeString()}
+                      </p>
                     </div>
-                  
-                </CardContent>
-              </Card>
+                    
+                    {message.role === 'user' && (
+                      <Avatar className="h-8 w-8 flex-shrink-0">
+                        <AvatarFallback className="bg-secondary">
+                          <User className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                  </div>
+                ))}
+                
+                {isLoading && (
+                  <div className="flex gap-3 justify-start">
+                    <Avatar className="h-8 w-8 flex-shrink-0">
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        <Bot className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="bg-muted rounded-lg p-3 flex-shrink-0">
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span className="text-sm">AI is thinking...</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={endOfMessagesRef} /> 
+              </div>
             </ScrollArea>
-          </SidebarGroupContent>
-        </SidebarGroup>
+          </CardContent>
+        </Card>
       </SidebarContent>
       
       <SidebarFooter className="border-t p-4">
