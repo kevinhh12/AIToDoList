@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { User, Settings, LogOut, LogIn, UserPlus } from "lucide-react"
+import { User, Settings, LogOut, LogIn} from "lucide-react"
 import { useAuth } from '../context/AuthContext'
 
 export interface UserData {
@@ -19,21 +19,24 @@ export interface UserData {
 
 export default function UsrProfile(){
     const { isLoggedIn, userData, handleLogout, handleGoogleLogin } = useAuth()
+    if (userData) {
+        console.log(userData.picture)
+    }
 
     return(
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <div className="p-2 rounded-full hover:bg-muted cursor-pointer transition-all duration-300 ease-in-out">
-                    <Avatar className="h-8 w-8">
+                    <div className=" h-8 w-8">
                         {isLoggedIn && userData ? (
                             
-                            <AvatarImage src={userData.picture} alt={userData.name} />
+                            <img className="rounded-full" src={userData.picture} alt={userData.name} />
                         ) : (
                             <div className="flex items-center justify-center h-full w-full">
                                 <User/>
                             </div>
                         )}
-                    </Avatar>
+                    </div>
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent 
