@@ -1,12 +1,17 @@
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import UsrProfile from "./app-user"
-import {Link} from "react-router-dom"
+import {Link, NavLink} from "react-router-dom"
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbSeparator,
+  } from "@/components/ui/breadcrumb"
 
 
 export function SiteHeader() {
-
-  
 
   return (
     <header className="pb-1 w-full group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-12 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear">
@@ -15,21 +20,36 @@ export function SiteHeader() {
 
         <div className="flex">
             <SidebarTrigger className="transition-all duration-300 ease-in-out -ml-1" />
-            <div className="py-1.5">
-                <Separator orientation="vertical" className=" mx-2 data-[orientation=vertical]:h-4" />    
-            </div>
-            <div>
-                <Link to={'/'}> Main </Link>
-            </div>
-            <div className="py-1.5">
-                <Separator orientation="vertical" className=" mx-2 data-[orientation=vertical]:h-4" />    
-            </div>
-            <div>
-                <Link to={'/about'}> About </Link>
+            <div className="pl-2 py-1">
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                        <NavLink 
+                            to="/" 
+                            className={({ isActive }) => 
+                                isActive ? "text-black font-medium" : "text-muted-foreground hover:text-foreground"
+                            }
+                        >
+                            Home
+                        </NavLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                        <NavLink 
+                            to="/about" 
+                            className={({ isActive }) => 
+                                isActive ? "text-black font-medium" : "text-muted-foreground hover:text-foreground"
+                            }
+                        >
+                            About
+                        </NavLink>
+                        </BreadcrumbItem>
+
+                    </BreadcrumbList>
+                </Breadcrumb>
             </div>
             
         </div>   
-        
         <div className="lg:px-4">
             <UsrProfile />
         </div>

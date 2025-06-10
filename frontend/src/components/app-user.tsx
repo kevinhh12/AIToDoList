@@ -8,10 +8,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { User, Settings, LogOut, LogIn, UserPlus } from "lucide-react"
-import { useEffect, useState } from "react"
-import axios from 'axios';
+import { useAuth } from '../context/AuthContext'
 
-interface UserData {
+export interface UserData {
     id: string
     name: string
     email: string
@@ -19,61 +18,7 @@ interface UserData {
 }
 
 export default function UsrProfile(){
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
-    const [userData, setUserData] = useState<UserData | null>(null)
-
-    // Check login status on mount
-    useEffect(() => {
-        checkLoginStatus()
-    }, [])
-
-    const checkLoginStatus = async () => {
-        try {
-            // Check if user is authenticated with your backend
-            const response = await axios.get('http://localhost:3000/login/auth/status', {
-                withCredentials: true // Include cookies
-            })
-            
-            if (response.status === 200) {
-                const user = response.data
-                console.log(user) // testing
-                setUserData(user)
-                setIsLoggedIn(true)
-            } else {
-                setIsLoggedIn(false)
-                setUserData(null)
-            }
-        } catch (error) {
-            console.error('Error checking auth status:', error)
-            setIsLoggedIn(false)
-            setUserData(null)
-        }
-    }
-
-    const handleGoogleLogin = () => {
-        // Redirect to your backend's Google OAuth endpoint
-        window.location.href = 'http://localhost:3000/login/auth/google'
-    }
-
-    const handleLogout = async () => {
-        try {
-            const response = await axios.post(
-                'http://localhost:3000/login/auth/logout',
-                {}, // empty body
-                { withCredentials: true } // this is the config
-              );
-            
-            if (response.status === 200) {
-                console.log('Logout successful on client side. Updating state...');
-                setIsLoggedIn(false)
-                setUserData(null)
-                checkLoginStatus() // Re-check status after logout
-            }
-        } catch (error) {
-            console.error('Error logging out:', error)
-        }
-    }
-
+    const { isLoggedIn, userData, handleLogout, handleGoogleLogin } = useAuth()
 
     return(
         <DropdownMenu>
