@@ -1,7 +1,7 @@
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import UsrProfile from "./app-user"
-
+import {Link} from "react-router-dom"
 
 
 export function SiteHeader() {
@@ -17,6 +17,15 @@ export function SiteHeader() {
             <SidebarTrigger className="transition-all duration-300 ease-in-out -ml-1" />
             <div className="py-1.5">
                 <Separator orientation="vertical" className=" mx-2 data-[orientation=vertical]:h-4" />    
+            </div>
+            <div>
+                <Link to={'/'}> Main </Link>
+            </div>
+            <div className="py-1.5">
+                <Separator orientation="vertical" className=" mx-2 data-[orientation=vertical]:h-4" />    
+            </div>
+            <div>
+                <Link to={'/about'}> About </Link>
             </div>
             
         </div>   

@@ -5,33 +5,27 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import UsrProfile from './components/app-user'
 import {SiteHeader} from './components/app-siteHeader'
+import Layout from "./Layout";
+import About from './components/app-about'
+import ToDo from './components/app-todo'
 
 function App() {
   return (
-    <div className="flex min-h-screen">
-      <SidebarProvider
-        style={{ 
-          "--sidebar-width": "24rem", // 384px - equivalent to w-96 It adjusted the sidebar size
-          "--sidebar-width-icon": "4rem", // 64px
-        }}
-      >
-        <AppSidebar />
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}> 
+          <Route path="/" element = {<ToDo />}/>
+          <Route path="/about" element = {<About />} />
+        </Route>
+
         
-        <SidebarInset>
-          <div className="flex justify-between items-center p-1">
-            <SiteHeader/>
-           
-            
-          </div>
-          
-        </SidebarInset>
-
-      </SidebarProvider>
-
+      </Routes>
     
-    </div>
+    </BrowserRouter>
+    
   )
 }
 
