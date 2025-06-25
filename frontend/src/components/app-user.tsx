@@ -1,4 +1,4 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,8 +29,10 @@ export default function UsrProfile(){
                 <div className="p-2 rounded-full hover:bg-muted cursor-pointer transition-all duration-300 ease-in-out">
                     <div className=" h-8 w-8">
                         {isLoggedIn && userData ? (
+                           
+                                <img className="rounded-full" src={userData.picture} alt={userData.name} />
+         
                             
-                            <img className="rounded-full" src={userData.picture} alt={userData.name} />
                         ) : (
                             <div className="flex items-center justify-center h-full w-full">
                                 <User/>
