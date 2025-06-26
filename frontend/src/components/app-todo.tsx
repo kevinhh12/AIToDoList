@@ -3,8 +3,11 @@ import { useAuth } from "../context/AuthContext";
 import Memo from "./ui/memo";
 import "react-time-picker/dist/TimePicker.css";
 import "react-clock/dist/Clock.css";
+import Alert from "./app-alert"; // adjust path if needed
 
 type ChecklistItem = { text: string; checked: boolean };
+
+type TodoItem = { text: string; checked: boolean };
 
 type MemoType = {
   title: string;
@@ -12,7 +15,7 @@ type MemoType = {
   dueTime?: string;
   color?: string;
   checklist?: ChecklistItem[];
-  todo?: string[];
+  todo: TodoItem[];
 };
 
 export default function ToDo() {
@@ -20,28 +23,62 @@ export default function ToDo() {
   const [memos, setMemos] = useState<MemoType[]>([
     { 
       title: "Shopping list", 
-      todo: ["Figs", "Bread", "Brie"],
+      todo: [
+        { text: "Figs", checked: false },
+        { text: "Bread", checked: false },
+        { text: "Brie", checked: true }
+      ],
       color: "yellow",
     },
     { 
       title: "Send photos from the zoo to Harry and bnlabla ", 
-      todo: ["Send photos"],
+      todo: [
+        { text: "Send photos", checked: false }
+      ],
       color: "red",
     },
     { 
       title: "Anniversary ideas", 
-      todo: ["Let's think about what to do this year.", "Love you!"],
+      todo: [
+        { text: "Let's think about what to do this year.", checked: false },
+        { text: "Love you!", checked: false }
+      ],
       color: "blue",
     },
   ]);
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [pendingDeleteIdx, setPendingDeleteIdx] = useState<number | null>(null);
+
+  // Handler to trigger alert
+  const handleDeleteRequest = (idx: number) => {
+    setPendingDeleteIdx(idx);
+    setAlertOpen(true);
+  };
+
+  // Handler to confirm deletion
+  const handleConfirmDelete = () => {
+    if (pendingDeleteIdx !== null) {
+      setMemos(prevMemos => prevMemos.filter((_, i) => i !== pendingDeleteIdx));
+      setEditingIdx(null);
+      setPendingDeleteIdx(null);
+    }
+    setAlertOpen(false);
+  };
+
+  // Handler to cancel deletion
+  const handleCancelDelete = () => {
+    setPendingDeleteIdx(null);
+    setEditingIdx(null);
+    setAlertOpen(false);
+  };
 
   return (
     <div className="container py-3 px-3 relative min-h-screen">
       {isLoggedIn ? (
         <>
           {/* Sticky Notes */}
-          <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 w-full">
+          <div data-aos="fade-up" className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 w-full">
             {memos.map((memo, idx) => (
               <div
                 key={idx}
@@ -62,17 +99,24 @@ export default function ToDo() {
                     setMemos(newMemos);
                   }}
                   onDoneEdit={() => setEditingIdx(null)}
+                  onToggleTodo={todoIdx => {
+                    const newMemos = [...memos];
+                    const todoArr = newMemos[idx].todo || [];
+                    todoArr[todoIdx].checked = !todoArr[todoIdx].checked;
+                    setMemos(newMemos);
+                  }}
+                  onDelete={() => handleDeleteRequest(idx)}
                 />
               </div>
             ))}
           </div>
               <button
                 className="transition-colors duration-200 fixed bottom-8 right-8 bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-4 px-6 rounded-full shadow-lg text-2xl z-50"
-                aria-label="Add Memo"
+                
                 onClick={() => {
                   setMemos([
                     ...memos,
-                    { title: "", todo: [""], color: "yellow", due: "" }
+                    { title: "", todo: [{ text: "", checked: false }], color: "yellow", due: "" }
                   ]);
                   setEditingIdx(memos.length); // index of the new memo
                 }}
@@ -84,6 +128,11 @@ export default function ToDo() {
       ) : (
         <h1>Please log in to see your tasks.</h1>
       )}
+      <Alert
+        alertOpen={alertOpen}
+        handleCancelDelete={handleCancelDelete}
+        handleConfirmDelete={handleConfirmDelete}
+      />
     </div>
   );
 }
