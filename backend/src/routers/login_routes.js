@@ -59,4 +59,9 @@ login_router.post('/auth/logout', (req, res) => {
     });
 });
 
+// Add this route to handle GET /login
+login_router.get('/', (req, res) => {
+  res.send('Login page placeholder.');
+});
+
 export default login_router;

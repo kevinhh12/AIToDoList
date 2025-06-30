@@ -51,9 +51,3 @@ app.listen(port,()=>{
     console.log(`app is listening on port: ${port}`)
 })
 
-
-
-
-// Goal: 
-// 1. Finish up Google auth.
-// 2. ToDO routes

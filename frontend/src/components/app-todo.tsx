@@ -1,54 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useTodo } from "../context/ToDoContext";
 import Memo from "./ui/memo";
 import "react-time-picker/dist/TimePicker.css";
 import "react-clock/dist/Clock.css";
 import Alert from "./app-alert"; // adjust path if needed
 
-type ChecklistItem = { text: string; checked: boolean };
 
-type TodoItem = { text: string; checked: boolean };
+
 
 type MemoType = {
+  id: number;
+  username: string;
   title: string;
-  due?: string;
-  dueTime?: string;
-  color?: string;
-  checklist?: ChecklistItem[];
-  todo: TodoItem[];
+  is_completed: boolean;
+  created_at: string;
+  color: string;
+  todo: { text: string; checked: boolean }[];
 };
 
 export default function ToDo() {
   const { isLoggedIn } = useAuth();
-  const [memos, setMemos] = useState<MemoType[]>([
-    { 
-      title: "Shopping list", 
-      todo: [
-        { text: "Figs", checked: false },
-        { text: "Bread", checked: false },
-        { text: "Brie", checked: true }
-      ],
-      color: "yellow",
-    },
-    { 
-      title: "Send photos from the zoo to Harry and bnlabla ", 
-      todo: [
-        { text: "Send photos", checked: false }
-      ],
-      color: "red",
-    },
-    { 
-      title: "Anniversary ideas", 
-      todo: [
-        { text: "Let's think about what to do this year.", checked: false },
-        { text: "Love you!", checked: false }
-      ],
-      color: "blue",
-    },
-  ]);
+  const {  todos, deleteTodo, updateTodo } = useTodo();
+
+
+  console.log(`isloggedin: ${isLoggedIn}`)
+
+  const [memos, setMemos] = useState<MemoType[]>(todos);
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
   const [alertOpen, setAlertOpen] = useState(false);
   const [pendingDeleteIdx, setPendingDeleteIdx] = useState<number | null>(null);
+
+  useEffect(() => {
+    setMemos(todos);
+  }, [todos]);
 
   // Handler to trigger alert
   const handleDeleteRequest = (idx: number) => {
@@ -59,7 +44,8 @@ export default function ToDo() {
   // Handler to confirm deletion
   const handleConfirmDelete = () => {
     if (pendingDeleteIdx !== null) {
-      setMemos(prevMemos => prevMemos.filter((_, i) => i !== pendingDeleteIdx));
+      console.log(pendingDeleteIdx)
+      deleteTodo(pendingDeleteIdx)
       setEditingIdx(null);
       setPendingDeleteIdx(null);
     }
@@ -110,19 +96,24 @@ export default function ToDo() {
               </div>
             ))}
           </div>
-              <button
-                className="transition-colors duration-200 fixed bottom-8 right-8 bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-4 px-6 rounded-full shadow-lg text-2xl z-50"
-                
-                onClick={() => {
-                  setMemos([
-                    ...memos,
-                    { title: "", todo: [{ text: "", checked: false }], color: "yellow", due: "" }
-                  ]);
-                  setEditingIdx(memos.length); // index of the new memo
-                }}
-              >
-                +
-              </button>
+            {!editingIdx &&(
+                              <button
+                              className="transition-colors duration-200 fixed bottom-8 right-8 bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-4 px-6 rounded-full shadow-lg text-2xl z-50"
+                              
+                              onClick={() => {
+                                setMemos([
+                                  ...memos,
+                                  { title: "", todo: [{ text: "", checked: false }], color: "yellow", is_completed: false, created_at: new Date().toISOString(), id: Date.now(), username: "" }
+                                ]);
+                                setEditingIdx(memos.length); // index of the new memo
+                              }}
+                            >
+                              +
+                            </button>
+            )}
+
+         
+
            
         </>
       ) : (

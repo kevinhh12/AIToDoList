@@ -4,9 +4,9 @@ import { authenticate } from '../middleware/auth.js';
 
 const toDo_router = express.Router();
 
-toDo_router.get('/get',authenticate,ToDo.getAllToDos);
+toDo_router.get('/get/:username',authenticate,ToDo.getAllToDos);
 toDo_router.post('/create',authenticate,ToDo.createToDo);
-toDo_router.put('/update',authenticate,ToDo.updateToDo);
-toDo_router.put('/delete',authenticate,ToDo.deleteToDo);
+toDo_router.put('/update/:id',authenticate,ToDo.updateToDo);
+toDo_router.delete('/delete/:id',authenticate,ToDo.deleteToDo);
 
 export default toDo_router;
