@@ -20,8 +20,8 @@ type MemoType = {
 };
 
 export default function ToDo() {
-  const { isLoggedIn } = useAuth();
-  const {  todos, deleteTodo, updateTodo } = useTodo();
+  const { isLoggedIn, userData } = useAuth();
+  const {  todos, deleteTodo, updateTodo, addTodo } = useTodo();
 
 
   console.log(`isloggedin: ${isLoggedIn}`)
@@ -65,47 +65,65 @@ export default function ToDo() {
         <>
           {/* Sticky Notes */}
           <div data-aos="fade-up" className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 w-full">
-            {memos.map((memo, idx) => (
-              <div
-                key={idx}
-                className="transition-transform duration-200 hover:scale-105"
-              >
-                <Memo
-                  {...memo}
-                  editing={editingIdx === idx}
-                  onEdit={() => setEditingIdx(idx)}
-                  onChangeTitle={title => {
-                    const newMemos = [...memos];
-                    newMemos[idx].title = title;
-                    setMemos(newMemos);
-                  }}
-                  onChangeTodo={todoArr => {
-                    const newMemos = [...memos];
-                    newMemos[idx].todo = todoArr;
-                    setMemos(newMemos);
-                  }}
-                  onDoneEdit={() => setEditingIdx(null)}
-                  onToggleTodo={todoIdx => {
-                    const newMemos = [...memos];
-                    const todoArr = newMemos[idx].todo || [];
-                    todoArr[todoIdx].checked = !todoArr[todoIdx].checked;
-                    setMemos(newMemos);
-                  }}
-                  onDelete={() => handleDeleteRequest(idx)}
-                />
-              </div>
-            ))}
+            {[...memos]
+              .sort((a, b) => a.id - b.id) // sort the todo based on the id created 
+              .map((memo) => (
+                <div
+                  key={memo.id}
+                  className="transition-transform duration-200 hover:scale-105"
+                >
+                  <Memo
+                    {...memo}
+                    editing={editingIdx === memo.id}
+                    onEdit={() => {
+                      setEditingIdx(memo.id)
+                      console.log(editingIdx) // debug
+                    }}
+                    onChangeTitle={title => {
+                      const newMemos = memos.map(m => m.id === memo.id ? { ...m, title } : m);
+                      setMemos(newMemos);
+                      updateTodo(newMemos.find(m => m.id === memo.id)!);
+                      
+                    }}
+                    onChangeTodo={todoArr => {
+                      const newMemos = memos.map(m => m.id === memo.id ? { ...m, todo: todoArr } : m);
+                      setMemos(newMemos);
+                      
+                      updateTodo(newMemos.find(m => m.id === memo.id)!);
+
+                    }}
+                    onDoneEdit={() => setEditingIdx(null)}
+                    onToggleTodo={todoIdx => {
+                      const newMemos = memos.map(m => {
+                        if (m.id === memo.id) {
+                          const todoArr = [...m.todo];
+                          todoArr[todoIdx].checked = !todoArr[todoIdx].checked;
+                          return { ...m, todo: todoArr };
+                        }
+                        return m;
+                      });
+                      setMemos(newMemos);
+                      updateTodo(newMemos.find(m => m.id === memo.id)!);
+                    }}
+                    onDelete={() => handleDeleteRequest(memo.id)}
+                  />
+                </div>
+              ))}
           </div>
             {!editingIdx &&(
                               <button
                               className="transition-colors duration-200 fixed bottom-8 right-8 bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-4 px-6 rounded-full shadow-lg text-2xl z-50"
                               
-                              onClick={() => {
-                                setMemos([
-                                  ...memos,
-                                  { title: "", todo: [{ text: "", checked: false }], color: "yellow", is_completed: false, created_at: new Date().toISOString(), id: Date.now(), username: "" }
-                                ]);
-                                setEditingIdx(memos.length); // index of the new memo
+                              onClick={async () => {
+                                const newMemo = {
+                                  username: userData?.email || "",
+                                  title: "",
+                                  is_completed: false,
+                                  color: "yellow",
+                                  todo: [{ text: "", checked: false }]
+                                };
+                                const added = await addTodo(newMemo);
+                                setEditingIdx(added.id);
                               }}
                             >
                               +

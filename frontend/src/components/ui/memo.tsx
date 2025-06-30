@@ -1,3 +1,4 @@
+
 import { Pencil } from "lucide-react";
 import { useRef, useEffect } from "react";
 
@@ -37,7 +38,7 @@ export default function Memo({
 
   const isVisible = todo.some(t => t.text && t.text.trim() !== "");
 
-  console.log("todo:", todo, "isVisible:", isVisible, "editing:", editing);
+
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 

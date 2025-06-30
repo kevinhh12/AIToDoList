@@ -7,6 +7,7 @@ interface TodoContextType {
   todos: any[];
   deleteTodo: (id: number) => Promise<void>;
   updateTodo: (updated: any) => Promise<void>;
+  addTodo: (newTodo: any) => Promise<any>;
 }
 
 const TodoContext = createContext<TodoContextType | undefined>(undefined);
@@ -29,12 +30,21 @@ export function ToDoProvider({ children }: { children: ReactNode }) {
         }
     }, [email]);
 
-    console.log(todos)
 
     // Delete a todo by id
     const deleteTodo = async (id: number) => {
         await axios.delete(`http://localhost:3000/toDo/delete/${id}`, { withCredentials: true });
         setTodos(prev => prev.filter(todo => todo.id !== id));
+    };
+
+    const addTodo = async (newTodo: any) => {
+        const res = await axios.post(
+            "http://localhost:3000/toDo/create",
+            newTodo,
+            { withCredentials: true }
+        );
+        setTodos(prev => [...prev, res.data]);
+        return res.data;
     };
 
     // Update a todo (full object)
@@ -44,7 +54,7 @@ export function ToDoProvider({ children }: { children: ReactNode }) {
     };
 
     return(
-        <TodoContext.Provider value={{ todos, deleteTodo, updateTodo }} >
+        <TodoContext.Provider value={{ todos, deleteTodo, updateTodo, addTodo }} >
             {children}
         </TodoContext.Provider>
 

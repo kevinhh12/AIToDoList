@@ -19,9 +19,7 @@ export interface UserData {
 
 export default function UsrProfile(){
     const { isLoggedIn, userData, handleLogout, handleGoogleLogin } = useAuth()
-    if (userData) {
-        console.log(userData.picture)
-    }
+
 
     return(
         <DropdownMenu>
