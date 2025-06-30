@@ -93,6 +93,7 @@ export default function ToDo() {
 
                     }}
                     onDoneEdit={() => setEditingIdx(null)}
+                    
                     onToggleTodo={todoIdx => {
                       const newMemos = memos.map(m => {
                         if (m.id === memo.id) {
@@ -106,6 +107,13 @@ export default function ToDo() {
                       updateTodo(newMemos.find(m => m.id === memo.id)!);
                     }}
                     onDelete={() => handleDeleteRequest(memo.id)}
+
+                    onColor={(color) => {
+                      const newMemos = memos.map(m => m.id === memo.id ? { ...m, color } : m);
+                      setMemos(newMemos);
+                      updateTodo(newMemos.find(m => m.id === memo.id)!);
+                    }}
+                  
                   />
                 </div>
               ))}
