@@ -7,6 +7,7 @@ import session from 'express-session'
 import cors from 'cors';
 import { limiter } from './middleware/limiter.js';
 import chat_router from './routers/ai_route.js';
+import { db } from './db.js';
 // Debug logging to verify environment variables
 console.log('Server starting with environment variables:');
 console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'exists' : 'missing');
@@ -54,6 +55,10 @@ app.use('/ai', chat_router);
 app.listen(port, () =>{
     console.log(`Example app listening on port ${port}`)
 })
+
+db.query('SELECT NOW()')
+  .then(res => console.log('DB connected:', res.rows[0]))
+  .catch(err => console.error('DB connection error:', err));
 
 
 
