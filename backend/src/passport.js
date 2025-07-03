@@ -53,18 +53,18 @@ passport.use("google",new GoogleStrategy({ // login with google
 // Serialization: When a user logs in, this function determines what data to store in the session
 // We only store the user's ID in the session cookie to keep it small and secure
 passport.serializeUser((user, cb) => {
-    cb(null, user.id);  // Store only the user ID in the session
+    cb(null, user.username); // Store username in session
 });
 
 // Deserialization: When a request comes in, this function uses the stored ID to fetch the full user data
 // This happens on every request where the session cookie is present
-passport.deserializeUser(async (id, cb) => {
+passport.deserializeUser(async (username, cb) => {
     try {
-        const result = await db.query('SELECT * FROM users WHERE id = $1', [id]);
+        const result = await db.query('SELECT * FROM users WHERE username = $1', [username]);
         if (result.rows.length > 0) {
-            cb(null, result.rows[0]);  // Attach the full user object to req.user
+            cb(null, result.rows[0]);
         } else {
-            cb(null, false); // User not found, indicate not authenticated
+            cb(null, false);
         }
     } catch (error) {
         cb(error);
