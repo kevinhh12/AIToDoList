@@ -8,6 +8,7 @@ import cors from 'cors';
 import { limiter } from './middleware/limiter.js';
 import chat_router from './routers/ai_route.js';
 import { db } from './db.js';
+import pgSession from 'connect-pg-simple';
 // Debug logging to verify environment variables
 console.log('Server starting with environment variables:');
 console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'exists' : 'missing');
@@ -16,7 +17,7 @@ console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'exists'
 const app = express();
 const port = process.env.PORT;
 
-
+const PgSession = pgSession(session);
 
 // CORS configuration
 app.use(cors({
@@ -31,6 +32,10 @@ app.use(cors({
 app.use(limiter);
 
 app.use(session({
+    store: new PgSession({
+        pool: db, // your existing pg Pool
+        tableName: 'session'
+    }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
