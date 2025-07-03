@@ -13,6 +13,7 @@ console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'exists' : 'miss
 console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'exists' : 'missing');
 
 const app = express();
+const port = process.env.PORT;
 
 
 
@@ -47,6 +48,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/login', login_router);
 app.use('/toDo',toDo_router);
 app.use('/ai', chat_router);
+
+app.listen(port, () =>{
+    console.log(`Example app listening on port ${port}`)
+})
 
 
 
