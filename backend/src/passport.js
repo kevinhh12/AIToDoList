@@ -53,6 +53,7 @@ passport.use("google",new GoogleStrategy({ // login with google
 // Serialization: When a user logs in, this function determines what data to store in the session
 // We only store the user's ID in the session cookie to keep it small and secure
 passport.serializeUser((user, cb) => {
+    console.log(user.username)
     cb(null, user.username); // Store username in session
 });
 
