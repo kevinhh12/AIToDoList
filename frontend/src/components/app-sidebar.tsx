@@ -45,7 +45,7 @@ export function AppSidebar() {
   const { sendMessage } = useAI();
   const inputRef = useRef<HTMLInputElement>(null);
   const { deleteTodo, updateTodo, addTodo} = useTodo();
-  const {userData} = useAuth();
+  const {isLoggedIn} = useAuth();
 
   useEffect(() => {
     if (!isLoading) {
@@ -97,12 +97,25 @@ export function AppSidebar() {
           timestamp: new Date()
         }
       ]);
+
+      if(!isLoggedIn){
+        setMessages(prev => [
+          ...prev,
+          {
+            id: Date.now().toString(),
+            content: 'Please Log in to use the AI Assistance',
+            role: 'assistant',
+            timestamp: new Date()
+          }
+        ]);
+      }
+
     } catch (err) {
       setMessages(prev => [
         ...prev,
         {
           id: (Date.now() + 2).toString(),
-          content: "Sorry, I couldn't get a response from the AI.",
+          content: "Sorry, I couldn't get a response from the AI. Please Log in to use this feature",
           role: 'assistant',
           timestamp: new Date()
         }

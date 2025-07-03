@@ -25,7 +25,7 @@ chat_router.post('/chat', async (req, res) => {
       const todoListString = JSON.stringify(todo.data, null, 2);
 
       // System prompt for the AI
-      const systemPrompt = `
+      const systemPrompt = ` 
         You are an assistant for a todo app.
         - If the user asks you to add, delete, or modify a todo, respond with BOTH:
           1. A JSON command (for the app to process, on the first line, as raw JSON, with NO markdown or code block).

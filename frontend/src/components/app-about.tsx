@@ -28,7 +28,7 @@ export default function About() {
                 <CardContent>
                     <p className="text-lg leading-relaxed mb-4">
                         AI ToDoList is more than just a task manager - it's your intelligent productivity companion. 
-                        Our AI chatbot understands your goals, helps break down complex projects, and provides 
+                        The Gemini(Google) AI chatbot understands your goals, helps break down complex projects, and provides 
                         personalized suggestions to keep you on track.
                     </p>
                     
