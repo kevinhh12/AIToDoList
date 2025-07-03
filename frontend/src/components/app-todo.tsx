@@ -21,7 +21,8 @@ type MemoType = {
 
 export default function ToDo() {
   const { isLoggedIn, userData } = useAuth();
-  const {  todos, deleteTodo, updateTodo, addTodo } = useTodo();
+  const { todos, deleteTodo, updateTodo, addTodo , fetchTodosFromDB} = useTodo();
+  const [loading, setLoading] = useState(true);
 
 
   console.log(`isloggedin: ${isLoggedIn}`)
@@ -32,8 +33,17 @@ export default function ToDo() {
   const [pendingDeleteIdx, setPendingDeleteIdx] = useState<number | null>(null);
 
   useEffect(() => {
+    if (isLoggedIn) {
+      setLoading(true); 
+      fetchTodosFromDB().finally(() => setLoading(false)); // Done loading
+    }
+  }, [isLoggedIn]);
+
+  useEffect(() => {
     setMemos(todos);
   }, [todos]);
+
+  console.log("todos from context:", todos);
 
   // Handler to trigger alert
   const handleDeleteRequest = (idx: number) => {
@@ -58,6 +68,19 @@ export default function ToDo() {
     setEditingIdx(null);
     setAlertOpen(false);
   };
+
+  if (!isLoggedIn) {
+    return (
+      <h1>Please log in to see your tasks.</h1>
+    )
+  }else if (loading){
+
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-xl font-semibold">Loading your memos...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-3 px-3 relative min-h-screen">
@@ -142,9 +165,7 @@ export default function ToDo() {
 
            
         </>
-      ) : (
-        <h1>Please log in to see your tasks.</h1>
-      )}
+      ) : null }
       <Alert
         alertOpen={alertOpen}
         handleCancelDelete={handleCancelDelete}

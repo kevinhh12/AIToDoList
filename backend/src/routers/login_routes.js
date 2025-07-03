@@ -1,6 +1,7 @@
 import express from "express";
 import passport from "../passport.js";
 
+
 const login_router = express.Router();
 
 // Google OAuth routes
@@ -16,9 +17,10 @@ login_router.get('/auth/google/main',
 );
 
 // Auth status check route
-login_router.get('/auth/status', (req, res) => {
+login_router.get('/auth/status', async (req, res) => {
     console.log('Deserialized User (req.user):', req.user);
     if (req.isAuthenticated()) {
+
         res.status(200).json({
             id: req.user.id,
             name: req.user.name,

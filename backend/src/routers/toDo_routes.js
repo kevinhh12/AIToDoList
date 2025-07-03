@@ -8,5 +8,6 @@ toDo_router.get('/get/:username',authenticate,ToDo.getAllToDos);
 toDo_router.post('/create',authenticate,ToDo.createToDo);
 toDo_router.put('/update/:id',authenticate,ToDo.updateToDo);
 toDo_router.delete('/delete/:id',authenticate,ToDo.deleteToDo);
+toDo_router.get('/internal-get/:username', ToDo.getAllToDos);
 
 export default toDo_router;

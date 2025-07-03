@@ -6,7 +6,7 @@ import passport from './passport.js';
 import session from 'express-session'
 import cors from 'cors';
 import { limiter } from './middleware/limiter.js';
-
+import chat_router from './routers/ai_route.js';
 // Debug logging to verify environment variables
 console.log('Server starting with environment variables:');
 console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'exists' : 'missing');
@@ -46,6 +46,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/login', login_router);
 app.use('/toDo',toDo_router);
+app.use('/ai', chat_router);
+
 
 app.listen(port,()=>{
     console.log(`app is listening on port: ${port}`)

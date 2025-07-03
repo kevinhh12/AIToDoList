@@ -1,11 +1,11 @@
 import { Send, Bot, User, Loader2 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
+import { useAI } from "@/context/AIContext"
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
+
 
   SidebarHeader,
   SidebarFooter,
@@ -16,6 +16,8 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { ScrollArea } from "./ui/scroll-area"
 import { Avatar, AvatarFallback } from "./ui/avatar"
+import { useTodo } from "@/context/ToDoContext"
+import { useAuth } from "@/context/AuthContext"
 
 
 /////////////////
@@ -40,40 +42,80 @@ export function AppSidebar() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
+  const { sendMessage } = useAI();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { deleteTodo, updateTodo, addTodo} = useTodo();
+  const {userData} = useAuth();
 
-  const handleSendMessage = async () => { // this handles the response after a usr type something 
-    if (!input.trim() || isLoading) return //if the input is empoty or its loading
+  useEffect(() => {
+    if (!isLoading) {
+      inputRef.current?.focus();
+    }
+  }, [isLoading]);
+
+  const handleSendMessage = async () => {
+    if (!input.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       content: input.trim(),
       role: 'user',
       timestamp: new Date()
-    }
+    };
 
-    setMessages(prev => [...prev, userMessage])
-    setInput('')
-    setIsLoading(true)
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
 
-    // Simulate AI response (replace with actual API call)
-    setTimeout(() => {
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: `I understand you said: "${input.trim()}". This is a simulated response. In a real implementation, you would connect this to an AI API like OpenAI, Anthropic, or your own model.`,
-        role: 'assistant',
-        timestamp: new Date()
+    try {
+      // Call your AI backend
+      const { command, text } = await sendMessage(userMessage.content);
+
+      console.log("AI command:", command, "Type:", typeof command);
+      console.log("AI text:", text, "Type:", typeof text);
+
+
+
+      if (command) {
+        // Process the command (add, delete, update todo, etc.)
+        if (command.action === "add_todo") {
+          addTodo(command.data);
+        } else if (command.action === "delete_todo") {
+          deleteTodo(command.data.id);
+        } else if (command.action === "update_todo") {
+          updateTodo(command.data);
+        }
       }
-      setMessages(prev => [...prev, aiMessage])
-      setIsLoading(false)
-    }, 1000)
-  }
+
+      // Show only the plain text to the user
+      setMessages(prev => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          content: text,
+          role: 'assistant',
+          timestamp: new Date()
+        }
+      ]);
+    } catch (err) {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: (Date.now() + 2).toString(),
+          content: "Sorry, I couldn't get a response from the AI.",
+          role: 'assistant',
+          timestamp: new Date()
+        }
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     // it makes the ref DOM element visible and scroll to the last visible element 
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-
 
   return (
     <Sidebar className="h-full">
@@ -152,11 +194,17 @@ export function AppSidebar() {
       <SidebarFooter className="border-t p-4">
         <div className="flex gap-2">
           <Input
+            ref={inputRef}
             placeholder="Type your message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={isLoading}
             className="flex-1"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !isLoading && input.trim()) {
+                handleSendMessage();
+              }
+            }}
           />
           <Button
             onClick={handleSendMessage}

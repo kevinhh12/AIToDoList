@@ -8,6 +8,7 @@ interface TodoContextType {
   deleteTodo: (id: number) => Promise<void>;
   updateTodo: (updated: any) => Promise<void>;
   addTodo: (newTodo: any) => Promise<any>;
+  fetchTodosFromDB: () => Promise<void>; 
 }
 
 const TodoContext = createContext<TodoContextType | undefined>(undefined);
@@ -20,15 +21,18 @@ export function ToDoProvider({ children }: { children: ReactNode }) {
 
     const [todos, setTodos] = useState<any[]>([]);
 
-    useEffect(() => {
-        if (email) {
-            axios
-                .get(`http://localhost:3000/toDo/get/${email}`, { // this will return a list of todos object from db
-                    withCredentials: true
-                })
-                .then(res => setTodos(res.data));
-        }
-    }, [email]);
+
+    const fetchTodosFromDB = async () => {
+        if (!email) return;
+        const res = await axios.get(`http://localhost:3000/toDo/get/${email}`, {
+          withCredentials: true
+        });
+        setTodos(res.data);
+      };
+      
+      useEffect(() => {
+        fetchTodosFromDB(); // run once on login
+      }, [email]);
 
 
     // Delete a todo by id
@@ -54,7 +58,7 @@ export function ToDoProvider({ children }: { children: ReactNode }) {
     };
 
     return(
-        <TodoContext.Provider value={{ todos, deleteTodo, updateTodo, addTodo }} >
+        <TodoContext.Provider value={{ todos, deleteTodo, updateTodo, addTodo, fetchTodosFromDB }} >
             {children}
         </TodoContext.Provider>
 
