@@ -3,6 +3,8 @@ import axios from 'axios';
 
 const backend_URL = import.meta.env.VITE_API_URL;
 
+console.log(backend_URL)
+
 interface UserData {
     id: string;
     name: string;
@@ -56,7 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             const response = await axios.post(
                 `${backend_URL}/login/auth/logout`,
-                {},
+                
                 { withCredentials: true }
             );
 
