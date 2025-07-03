@@ -13,7 +13,7 @@ console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'exists' : 'miss
 console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'exists' : 'missing');
 
 const app = express();
-const port = 3000;
+
 
 
 // CORS configuration
@@ -49,7 +49,5 @@ app.use('/toDo',toDo_router);
 app.use('/ai', chat_router);
 
 
-app.listen(port,()=>{
-    console.log(`app is listening on port: ${port}`)
-})
+
 
