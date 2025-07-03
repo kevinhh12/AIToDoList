@@ -21,7 +21,7 @@ const port = process.env.PORT;
 // CORS configuration
 app.use(cors({
     origin: [
-        'https://ai-to-do-list-phi.vercel.app/'
+        'https://ai-to-do-list-phi.vercel.app'
          // your deployed frontend
     ],
     credentials: true,
