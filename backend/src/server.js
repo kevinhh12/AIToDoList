@@ -21,8 +21,8 @@ const port = process.env.PORT;
 // CORS configuration
 app.use(cors({
     origin: [
-        'http://localhost:5173', // for local dev
-        'https://ai-to-do-list-mocha.vercel.app' // your deployed frontend
+        'https://ai-to-do-list-phi.vercel.app/'
+         // your deployed frontend
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
