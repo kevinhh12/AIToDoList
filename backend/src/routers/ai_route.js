@@ -6,6 +6,9 @@ import axios from "axios";
 
 const chat_router = e.Router();
 
+const backendURL = process.env.VITE_API_URL;
+
+
 // Fetch your API_KEY
 const API_KEY = process.env.GEMINI_AI_API;
 // Reminder: This should only be for local testing
@@ -21,7 +24,7 @@ chat_router.post('/chat', async (req, res) => {
   
     try {
       // Fetch the user's todo list
-      const todo = await axios.get(`http://localhost:3000/toDo/internal-get/${username}`);
+      const todo = await axios.get(`${backendURL}/toDo/internal-get/${username}`);
       const todoListString = JSON.stringify(todo.data, null, 2);
 
       // System prompt for the AI

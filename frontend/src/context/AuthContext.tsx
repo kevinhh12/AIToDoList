@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 
+const backend_URL = import.meta.env.VITE_API_URL;
+
 interface UserData {
     id: string;
     name: string;
@@ -28,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const checkLoginStatus = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/login/auth/status', {
+            const response = await axios.get(`${backend_URL}/login/auth/status`, {
                 withCredentials: true
             });
 
@@ -47,13 +49,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const handleGoogleLogin = () => {
-        window.location.href = 'http://localhost:3000/login/auth/google';
+        window.location.href = `${backend_URL}/login/auth/google`;
     };
 
     const handleLogout = async () => {
         try {
             const response = await axios.post(
-                'http://localhost:3000/login/auth/logout',
+                `${backend_URL}/login/auth/logout`,
                 {},
                 { withCredentials: true }
             );

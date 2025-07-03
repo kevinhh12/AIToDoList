@@ -2,6 +2,8 @@ import { createContext, useContext, ReactNode } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
 
+const backend_URL = import.meta.env.VITE_API_URL;
+
 // Define the context type
 interface AIContextType {
   sendMessage: (message: string) => Promise<{ command: any, text: string }>;
@@ -19,7 +21,7 @@ export const AIProvider = ({ children }: { children: ReactNode }) => {
     const sendMessage = async (message: string) => {
         if (!userData || !userData.email) throw new Error("User not authenticated");
 
-        const res = await axios.post('http://localhost:3000/ai/chat', { username, message });
+        const res = await axios.post(`${backend_URL}/ai/chat`, { username, message });
         return res.data;
     };
 

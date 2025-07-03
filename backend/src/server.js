@@ -24,7 +24,7 @@ app.use(cors({
    
 }));
 
-//app.use(limiter);
+app.use(limiter);
 
 app.use(session({
     secret: process.env.SESSION_SECRET,

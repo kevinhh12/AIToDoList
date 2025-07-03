@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import axios from "axios";
 import { useAuth } from "./AuthContext";
 
+const backend_URL = import.meta.env.VITE_API_URL;
+
 // Define the context type
 interface TodoContextType {
   todos: any[];
@@ -24,7 +26,7 @@ export function ToDoProvider({ children }: { children: ReactNode }) {
 
     const fetchTodosFromDB = async () => {
         if (!email) return;
-        const res = await axios.get(`http://localhost:3000/toDo/get/${email}`, {
+        const res = await axios.get(`${backend_URL}/toDo/get/${email}`, {
           withCredentials: true
         });
         setTodos(res.data);
@@ -37,13 +39,13 @@ export function ToDoProvider({ children }: { children: ReactNode }) {
 
     // Delete a todo by id
     const deleteTodo = async (id: number) => {
-        await axios.delete(`http://localhost:3000/toDo/delete/${id}`, { withCredentials: true });
+        await axios.delete(`${backend_URL}/toDo/delete/${id}`, { withCredentials: true });
         setTodos(prev => prev.filter(todo => todo.id !== id));
     };
 
     const addTodo = async (newTodo: any) => {
         const res = await axios.post(
-            "http://localhost:3000/toDo/create",
+            `${backend_URL}/toDo/create`,
             newTodo,
             { withCredentials: true }
         );
@@ -53,7 +55,7 @@ export function ToDoProvider({ children }: { children: ReactNode }) {
 
     // Update a todo (full object)
     const updateTodo = async (updated: any) => {
-        await axios.put(`http://localhost:3000/toDo/update/${updated.id}`, updated, { withCredentials: true });
+        await axios.put(`${backend_URL}/toDo/update/${updated.id}`, updated, { withCredentials: true });
         setTodos(prev => prev.map(todo => todo.id === updated.id ? updated : todo));
     };
 
