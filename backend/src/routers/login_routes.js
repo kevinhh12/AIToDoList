@@ -11,8 +11,8 @@ login_router.get('/auth/google',
 
 login_router.get('/auth/google/main',
     passport.authenticate('google', { 
-        failureRedirect: 'https://ai-to-do-list-mocha.vercel.app',
-        successRedirect: 'https://ai-to-do-list-mocha.vercel.app'
+        failureRedirect: 'http://localhost:5173',
+        successRedirect: 'http://localhost:5173'
     })
 );
 

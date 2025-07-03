@@ -19,7 +19,7 @@ const port = process.env.PORT;
 
 // CORS configuration
 app.use(cors({
-    origin: 'https://ai-to-do-list-mocha.vercel.app/', // Vite's default frontend port
+    origin: 'http://localhost:5173', // Vite's default frontend port
     credentials: true, // Allow cookies to be sent with requests
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
    
