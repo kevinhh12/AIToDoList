@@ -60,8 +60,8 @@ passport.serializeUser((user, cb) => {
 
 // Deserialization: When a request comes in, this function uses the stored ID to fetch the full user data
 // This happens on every request where the session cookie is present
-passport.deserializeUser(async (username, cb) => {
-    console.log("Deserializing username:", id); 
+passport.deserializeUser(async (id, cb) => {
+    console.log("Deserializing user ID:", id); 
     try {
         const result = await db.query('SELECT * FROM users WHERE id = $1', [id]);
         console.log("Found user in DB:", result.rows);

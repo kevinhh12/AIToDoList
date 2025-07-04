@@ -53,7 +53,7 @@ login_router.post('/auth/logout', (req, res) => {
             res.clearCookie('connect.sid', {
                 path: '/',
                 secure: process.env.NODE_ENV === 'production', // Match server.js setting
-                sameSite: 'lax' // Match server.js setting
+                sameSite: 'none' // Match server.js setting
             }); 
 
             res.status(200).json({ message: 'Logged out successfully' });
