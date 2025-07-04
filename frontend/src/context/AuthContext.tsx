@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const backend_URL = import.meta.env.VITE_API_URL;
 
+
 console.log(backend_URL)
 
 interface UserData {
@@ -51,7 +52,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const handleGoogleLogin = () => {
-        window.location.href = `${backend_URL}/login/auth/google`;
+            window.location.href = `${import.meta.env.VITE_API_URL}/login/auth/google`;
+
     };
 
     const handleLogout = async () => {
