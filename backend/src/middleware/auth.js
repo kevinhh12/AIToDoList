@@ -6,7 +6,7 @@ export function authenticate(req, res, next) {
     } else {
       // If it's an API request, send JSON instead of redirect
       if (req.originalUrl.startsWith('/toDo')) {
-        return res.status(401).json({ error: 'Not authenticated' });
+        return res.status(401).json({ error: 'Not authenticatedn from middleware' });
       }
       res.redirect('/login');
     }
