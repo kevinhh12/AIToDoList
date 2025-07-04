@@ -17,7 +17,7 @@ console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'exists'
 const app = express();
 const port = process.env.PORT;
 
-const PgSession = pgSession(session);
+// const PgSession = pgSession(session);
 
 //CORS configuration
 app.use(cors({
@@ -29,11 +29,11 @@ app.use(cors({
 app.use(limiter);
 
 app.use(session({
-    store: new PgSession({
-        pool: db,
-        tableName: 'session',
-        createTableIfMissing: true
-    }),
+    // store: new PgSession({
+    //     pool: db,
+    //     tableName: 'session',
+    //     createTableIfMissing: true
+    // }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
