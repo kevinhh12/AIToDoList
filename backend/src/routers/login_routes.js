@@ -11,8 +11,8 @@ login_router.get('/auth/google',
 
 login_router.get('/auth/google/main',
     passport.authenticate('google', { 
-        failureRedirect: 'https://ai-to-do-list-phi.vercel.app',
-        successRedirect: 'https://ai-to-do-list-phi.vercel.app'
+        failureRedirect: process.env.DIRECT_URL,
+        successRedirect: process.env.DIRECT_URL
     })
 );
 

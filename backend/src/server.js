@@ -17,11 +17,11 @@ console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'exists'
 const app = express();
 const port = process.env.PORT;
 
-// const PgSession = pgSession(session);
+const PgSession = pgSession(session);
 
 //CORS configuration
 app.use(cors({
-    origin: ['https://ai-to-do-list-phi.vercel.app'],
+    origin: [process.env.DIRECT_URL],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
@@ -29,11 +29,11 @@ app.use(cors({
 app.use(limiter);
 
 app.use(session({
-    // store: new PgSession({
-    //     pool: db,
-    //     tableName: 'session',
-    //     createTableIfMissing: true
-    // }),
+    store: new PgSession({
+        pool: db,
+        tableName: 'session',
+        createTableIfMissing: true
+    }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -56,12 +56,10 @@ app.use('/toDo',toDo_router);
 app.use('/ai', chat_router);
 
 app.listen(port, () =>{
-    console.log(`Example app listening on port ${port}`)
+    console.log(`app listening on port ${port}`)
 })
 
-db.query('SELECT NOW()')
-  .then(res => console.log('DB connected:', res.rows[0]))
-  .catch(err => console.error('DB connection error:', err));
+
 
 
 
