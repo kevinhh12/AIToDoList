@@ -20,13 +20,13 @@ const port = process.env.PORT;
 const PgSession = pgSession(session);
 
 // CORS configuration
-app.use(cors({
-    origin: ['https://ai-to-do-list-phi.vercel.app'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-}));
+// app.use(cors({
+//     origin: ['https://ai-to-do-list-phi.vercel.app'],
+//     credentials: true,
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+// }));
 
-app.use(limiter);
+// app.use(limiter);
 
 app.use(session({
     store: new PgSession({
