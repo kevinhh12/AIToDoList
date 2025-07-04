@@ -33,8 +33,9 @@ app.use(limiter);
 
 app.use(session({
     store: new PgSession({
-        pool: db, // your existing pg Pool
-        tableName: 'session'
+        pool: db,
+        tableName: 'session',
+        createTableIfMissing: true
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
