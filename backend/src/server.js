@@ -21,10 +21,7 @@ const PgSession = pgSession(session);
 
 // CORS configuration
 app.use(cors({
-    origin: [
-        'https://ai-to-do-list-phi.vercel.app'
-         // your deployed frontend
-    ],
+    origin: ['https://ai-to-do-list-phi.vercel.app'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
@@ -41,8 +38,8 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: {
-        secure: process.env.NODE_ENV === 'production', // true in production
-        sameSite: 'none', // <--- THIS IS CRITICAL
+        secure: true,         // must be true for HTTPS (Render)
+        sameSite: 'none',     // must be 'none' for cross-site cookies
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }));

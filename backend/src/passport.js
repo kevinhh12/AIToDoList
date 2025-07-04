@@ -31,6 +31,7 @@ passport.use("google",new GoogleStrategy({ // login with google
         
         if (result.rows.length === 0) {
             // User doesn't exist, create new user
+            console.log(`Insert user successful`)
             const newUser = await db.query(
                 'INSERT INTO users (username, password_hash, name, picture) VALUES ($1, $2, $3, $4) RETURNING *',
                 [username, 'google', name, picture]
