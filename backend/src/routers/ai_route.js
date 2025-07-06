@@ -6,7 +6,7 @@ import axios from "axios";
 
 const chat_router = e.Router();
 
-const backendURL = process.env.VITE_API_URL;
+const backendURL = process.env.BACKEND_URL;
 
 
 // Fetch your API_KEY
