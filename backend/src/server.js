@@ -20,11 +20,11 @@ const port = process.env.PORT;
 const PgSession = pgSession(session);
 
 //CORS configuration
-// app.use(cors({
-//     origin: [process.env.DIRECT_URL],
-//     credentials: true,
-//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-// }));
+app.use(cors({
+    origin: process.env.DIRECT_URL,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+}));
 
 app.use(limiter);
 
