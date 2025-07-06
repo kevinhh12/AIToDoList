@@ -13,7 +13,7 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
 passport.use("google",new GoogleStrategy({ // login with google 
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    callbackURL: process.envimage.pngL,
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
 
 },async ( accessToken, refreshToken, profile, cb)=>{
