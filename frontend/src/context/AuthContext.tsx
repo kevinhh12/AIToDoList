@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const handleGoogleLogin = () => {
+
             window.location.href = `${import.meta.env.VITE_API_URL}/login/auth/google`;
 
     };
@@ -60,7 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             const response = await axios.post(
                 `${backend_URL}/login/auth/logout`,
-                
+                {},
                 { withCredentials: true }
             );
 

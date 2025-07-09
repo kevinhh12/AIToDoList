@@ -52,7 +52,6 @@ login_router.post('/auth/logout', (req, res) => {
             // Clear the session cookie from the client's browser with explicit options
             res.clearCookie('connect.sid', {
                 path: '/',
-                httpOnly: true,
                 sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
                 secure: process.env.NODE_ENV === 'production'
               });
