@@ -52,9 +52,10 @@ login_router.post('/auth/logout', (req, res) => {
             // Clear the session cookie from the client's browser with explicit options
             res.clearCookie('connect.sid', {
                 path: '/',
-                secure: true, // Match server.js setting
-                sameSite: 'none' // Match server.js setting
-            }); 
+                httpOnly: true,
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+                secure: process.env.NODE_ENV === 'production'
+              });
 
             res.status(200).json({ message: 'Logged out successfully' });
         });
