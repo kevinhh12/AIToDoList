@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { User, Settings, LogOut, LogIn} from "lucide-react"
+import { User, LogOut, LogIn} from "lucide-react"
 import { useAuth } from '../context/AuthContext'
 
 export interface UserData {

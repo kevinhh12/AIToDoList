@@ -26,7 +26,7 @@ app.use(cors({
     origin: process.env.DIRECT_URL,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    
+  
 }));
 
 app.use(limiter);

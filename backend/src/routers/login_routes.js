@@ -52,7 +52,7 @@ login_router.post('/auth/logout', (req, res) => {
             // Clear the session cookie from the client's browser with explicit options
             res.clearCookie('connect.sid', {
                 path: '/',
-                secure: process.env.NODE_ENV === 'production', // Match server.js setting
+                secure: true, // Match server.js setting
                 sameSite: 'none' // Match server.js setting
             }); 
 
