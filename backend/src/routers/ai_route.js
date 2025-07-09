@@ -29,87 +29,93 @@ chat_router.post('/chat', async (req, res) => {
 
       // System prompt for the AI
       const systemPrompt = ` 
-        You are an assistant for a todo app.
+You are an assistant for a todo app.
 
-- If the user asks you to add, delete, or modify a todo, respond with BOTH:
-  1. A JSON command (for the app to process, on the first line, as raw JSON, with NO markdown or code block).
-  2. A plain English explanation (for the user, on the next line).
+You MUST respond with a single valid JSON object like this:
 
-- For "add_todo" and "update_todo" actions, ALWAYS include all of these fields in the "data" object:
-  - username (string)
-  - title (string)
-  - is_completed (boolean)
-  - created_at (ISO 8601 string, e.g. "2024-06-01T12:00:00Z")
-  - color (string, must be one of: "yellow", "red", "blue", "green")
-  - todo (an array of checklist items, e.g. [{"text": "Buy milk", "done": false}])
+{
+  "command": { ... },
+  "text": "..." 
+}
 
-- If the user does not specify a color, set "color" to "yellow".
-- If the user specifies a color that is not "yellow", "red", "blue", or "green", set "color" to "yellow".
+DO NOT wrap the JSON inside a string.
+DO NOT return JSON as a code block or inside markdown.
+DO NOT include any explanation or formatting outside the JSON.
 
-- Example for adding:
-  {"action": "add_todo", "data": {"username": "alice", "title": "Buy milk", "is_completed": false, "created_at": "2024-06-01T12:00:00Z", "color": "yellow", "todo": [{"text": "Buy milk", "done": false}]}}
+Respond ONLY with a single valid JSON object. Do NOT wrap the object in a string, code block, or markdown. Do NOT output any text before or after the JSON object. The response must be a valid JSON object, not a string.
 
-- Example for updating:
-  {"action": "update_todo", "data": {"id": 123, "username": "alice", "title": "Buy eggs", "is_completed": true, "created_at": "2024-06-01T12:00:00Z", "color": "blue", "todo": [{"text": "Buy eggs", "done": true}]}}
+You will receive three variables:
+- ${message}: the user's input
+- ${username}: the user's email
+- ${todoListString}: the user's current todo list in JSON (optional)
 
-- When the user tries removing an item, the action is "update".
-- When the user is deleting a plan, the action is "delete".
+Your task is to understand the user's message and respond with a valid JSON object that contains:
+1. "command": a structured JSON command for the app to process 
+2. "text": a plain English explanation that will be shown to the user
 
-- For "update_todo" actions, ALWAYS include all of these fields in the "data" object:
+The entire response MUST be a single valid JSON object and nothing else.
+DO NOT use markdown, backticks, or any formatting. DO NOT add comments, headers, or explanations outside the JSON.
+
+---
+
+Rules for generating the "command":
+
+- If the user is chatting or asking questions unrelated to todos, return:
+  {
+    "command": null,
+    "text": "Your friendly response here..."
+  }
+
+- If the user asks to add, delete, or update a todo, respond with:
+  {
+    "command": {
+      "action": "add_todo" | "update_todo" | "delete_todo",
+      "data": { ... }
+    },
+    "text": "Your explanation here..."
+  }
+
+- For "add_todo" or "update_todo", the "data" must contain:
+  - username: "${username}"
+  - title: a short title
+  - is_completed: false by default
+  - created_at: ISO 8601 timestamp (e.g. "2024-06-01T12:00:00Z")
+  - color: "yellow" if missing or invalid; must be one of "yellow", "red", "blue", "green"
+  - todo: an array of checklist items like [{ "text": "...", "done": false }]
+
+- For "update_todo", include all fields above plus:
   - id (number)
-  - username (string)
-  - title (string)
-  - is_completed (boolean)
-  - created_at (ISO 8601 string)
-  - color (string, must be one of: "yellow", "red", "blue", "green")
-  - todo (an array of checklist items, e.g. [{"text": "Buy milk", "done": false}])
 
-- DO NOT mention the username in your text response.
-- DO NOT use markdown, code blocks, or any extra formatting for the JSON command. The first line must be valid JSON only.
+- For "delete_todo", only include:
+  - id (number)
 
-- The number 1, 2, 3... represents the order of the todo items.
+- If the user requests a custom plan (e.g. workout, travel prep, shopping list), generate a todo with ~3–7 checklist items broken into steps.
 
 ---
 
-🌟 **When the user asks for a plan or goal (e.g., "Help me prepare for an exam" or "Create a 7-day workout routine"), create a new todo with a relevant title and generate a checklist with subtasks that break down the goal into small actionable steps.**
 
-- Use common sense and the user's request to split the plan into ~3–7 tasks.
-- Use the current date/time for "created_at".
-- Default to color "yellow" unless the user specifies a valid color.
-- If they mention time span (like 3 days or 1 week), structure the checklist accordingly.
-- If they ask for prioritization, sort the subtasks in a logical order.
-- If they say "make it short" or "only a few steps", limit to 3 subtasks.
-
----
-
-Here is the user's current todo list (as JSON):
-${todoListString}
-
-User request: ${message}
-
-Here is the username: ${username}
         `;
   
       const chat = await model.startChat();
       const result = await chat.sendMessage(systemPrompt);
       const response = result.response;
       const text = response.text();
-  
-      // Split the response into lines
-      const [jsonLine, ...textLines] = text.split('\n').filter(Boolean);
-  
+
       let command = null;
-      let explanation = textLines.join('\n');
-      let jsonLineClean = jsonLine.replace(/```json|```/g, '').trim();
+      let explanation = '';
+      let textClean = text.replace(/```json|```/g, '').trim();
       try {
-        command = JSON.parse(jsonLineClean);
+        // Try to parse the whole response as JSON
+        const parsed = JSON.parse(textClean);
+        command = parsed.command;
+        explanation = parsed.text;
       } catch {
-        // Not a command, treat the whole response as plain text
+        // Not a valid JSON object, treat as plain text
         explanation = text;
       }
-  
+
       console.log("Gemini raw response:", text);
-  
+
       res.json({ command, text: explanation });
     } catch (error) {
       console.error("Gemini API error:", error);

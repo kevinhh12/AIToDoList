@@ -1,6 +1,7 @@
 import { createContext, useContext, ReactNode } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
+import { useTodo } from './ToDoContext';
 
 const backend_URL = import.meta.env.VITE_API_URL;
 
@@ -16,12 +17,14 @@ const AIContext = createContext<AIContextType | undefined>(undefined);
 export const AIProvider = ({ children }: { children: ReactNode }) => {
   // Function to send a message to the backend AI route
     const {userData} = useAuth();
+    const {todos} = useTodo();
     const username = userData?.email;
+    const tdl = todos;
 
     const sendMessage = async (message: string) => {
         if (!userData || !userData.email) throw new Error("User not authenticated");
 
-        const res = await axios.post(`${backend_URL}/ai/chat`, { username, message });
+        const res = await axios.post(`${backend_URL}/ai/chat`, { username, message, tdl});
         return res.data;
     };
 

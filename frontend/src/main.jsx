@@ -9,11 +9,11 @@ import { AIProvider } from './context/AIContext.tsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <AIProvider>
-        <ToDoProvider >
-          <App />
-        </ToDoProvider> 
-      </AIProvider>
+      <ToDoProvider >
+        <AIProvider>  
+            <App />
+        </AIProvider>
+      </ToDoProvider >
     </AuthProvider>
   </StrictMode>,
 )
