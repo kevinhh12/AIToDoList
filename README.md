@@ -104,6 +104,17 @@ BACKEND_URL=https://your-backend-url.onrender.com
 
 4. Set up PostgreSQL database:
 ```sql
+-- Users table for authentication
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  name VARCHAR(255),
+  picture TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Todo items table
 CREATE TABLE tdl (
   id SERIAL PRIMARY KEY,
   username VARCHAR(255) NOT NULL,
@@ -113,6 +124,9 @@ CREATE TABLE tdl (
   color VARCHAR(50) DEFAULT 'yellow',
   todo JSONB
 );
+
+-- Session table (created automatically by connect-pg-simple)
+-- This will be created automatically when the app starts
 ```
 
 5. Start the server:
