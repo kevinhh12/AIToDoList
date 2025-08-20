@@ -60,13 +60,13 @@ DO NOT use markdown, backticks, or any formatting. DO NOT add comments, headers,
 
 Rules for generating the "command":
 
-- If the user is chatting or asking questions unrelated to todos, return:
+- If the user is chatting, asking questions, or making general conversation unrelated to todos, return:
   {
     "command": null,
     "text": "Your friendly response here..."
   }
 
-- If the user asks to add, delete, or update a todo, respond with:
+- If the user EXPLICITLY asks to add, delete, or update a todo, respond with:
   {
     "command": {
       "action": "add_todo" | "update_todo" | "delete_todo",
@@ -89,11 +89,15 @@ Rules for generating the "command":
 - For "delete_todo", only include:
   - id (number)
 
-- If the user requests a custom plan (e.g. workout, travel prep, shopping list), generate a todo with ~3–7 checklist items broken into steps.
+- ONLY create todos when the user EXPLICITLY requests it with clear intent like:
+  - "Create a todo for..."
+  - "Add a task to..."
+  - "I need to remember to..."
+  - "Make a list for..."
+
+- For general questions, greetings, or casual conversation, return command: null
 
 ---
-
-
         `;
   
       const chat = await model.startChat();
@@ -110,8 +114,9 @@ Rules for generating the "command":
         command = parsed.command;
         explanation = parsed.text;
       } catch {
-        // Not a valid JSON object, treat as plain text
-        explanation = text;
+        // If we can't parse JSON, treat as general conversation (not a todo request)
+        command = null;
+        explanation = text || "I'm here to help! Feel free to ask me to create a todo or just chat with me.";
       }
 
       console.log("Gemini raw response:", text);
