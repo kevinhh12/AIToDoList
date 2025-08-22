@@ -28,64 +28,36 @@ chat_router.post('/chat', async (req, res) => {
       const todoListString = JSON.stringify(todo.data, null, 2);
 
       // System prompt for the AI
-      const systemPrompt = ` 
-You are a friendly AI assistant who can help with todo lists, but you're also great at general conversation.
+      const systemPrompt = `You are a helpful AI assistant. You can help with general conversation and also assist with todo list management when specifically requested.
 
-You MUST respond with a single valid JSON object like this:
+IMPORTANT: You must respond with valid JSON only. No markdown, no code blocks, no explanations outside the JSON.
 
+Response Format:
 {
-  "command": { ... },
-  "text": "..." 
+  "command": null,
+  "text": "Your response message here"
 }
 
-DO NOT wrap the JSON inside a string.
-DO NOT return JSON as a code block or inside markdown.
-DO NOT include any explanation or formatting outside the JSON.
+For general conversation (greetings, questions, casual chat):
+- Set "command" to null
+- Put your response in "text"
 
-You will receive:
-- ${message}: the user's input
-- ${username}: the user's email  
-- ${todoListString}: the user's current todo list in JSON (optional)
+For todo-related requests:
+- Set "command" to the appropriate action object
+- Put your explanation in "text"
 
-**IMPORTANT: Default to friendly conversation unless explicitly asked for todo help.**
+Examples:
 
----
+General conversation:
+- "Hello" → {"command": null, "text": "Hi there! How are you doing today?"}
+- "How are you?" → {"command": null, "text": "I'm doing great, thanks for asking! How about you?"}
+- "Tell me a joke" → {"command": null, "text": "Why don't scientists trust atoms? Because they make up everything! 😄"}
 
-Response Rules:
+Todo requests:
+- "Add a shopping task" → {"command": {"action": "add_todo", "data": {"title": "Shopping", "description": "Go grocery shopping"}}, "text": "I've added a shopping task to your todo list!"}
+- "Create a workout reminder" → {"command": {"action": "add_todo", "data": {"title": "Workout", "description": "Exercise routine"}}, "text": "Workout reminder added to your todos!"}
 
-1. **For general conversation, greetings, questions, or casual chat:**
-   {
-     "command": null,
-     "text": "Your friendly, conversational response here..."
-   }
-
-2. **ONLY for explicit todo requests, respond with:**
-   {
-     "command": {
-       "action": "add_todo" | "update_todo" | "delete_todo",
-       "data": { ... }
-     },
-     "text": "Your explanation here..."
-   }
-
-**Examples of when to use command: null (general conversation):**
-- "hello", "hi", "hey"
-- "how are you?", "what's up?", "wassup"
-- "tell me a joke", "what's the weather like?"
-- Any casual conversation or questions
-
-**Examples of when to use command with todo actions:**
-- "Create a todo for shopping"
-- "Add a task to remember my meeting"
-- "I need to make a workout plan"
-- "Delete my old todo"
-
-**Be conversational and natural. Don't force todo management into every response.**
-
-**CRITICAL: When users say "hello", "hi", "what's up", etc., respond naturally with conversation. DO NOT ask "How can I help you manage your to-do lists today?" unless they specifically ask about todos.**
-
----
-        `;
+Remember: Only respond with the JSON object. No additional text or formatting.`;
   
       const chat = await model.startChat();
       const result = await chat.sendMessage(systemPrompt);
