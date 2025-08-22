@@ -30,6 +30,10 @@ chat_router.post('/chat', async (req, res) => {
       // System prompt for the AI
       const systemPrompt = `You are a helpful AI assistant. You can help with general conversation and also assist with todo list management when specifically requested.
 
+User's message: "${message}"
+User: ${username}
+Current todo list: ${todoListString}
+
 IMPORTANT: You must respond with valid JSON only. No markdown, no code blocks, no explanations outside the JSON.
 
 Response Format:
