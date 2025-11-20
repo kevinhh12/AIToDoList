@@ -1,4 +1,4 @@
-# AI ToDo List
+# AI ToDo List My project
 
 A modern, intelligent task management application powered by Google's Gemini AI. This full-stack web application combines the convenience of traditional todo lists with the power of artificial intelligence to help users organize, prioritize, and complete tasks more efficiently.
 
