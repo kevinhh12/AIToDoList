@@ -19,7 +19,7 @@ const port = process.env.PORT;
 
 const PgSession = pgSession(session);
 
-app.set('trust proxy',true)
+app.set('trust proxy',1)
 
 //CORS configuration
 app.use(cors({

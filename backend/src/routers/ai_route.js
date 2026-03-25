@@ -23,8 +23,8 @@ chat_router.post('/chat', async (req, res) => {
       const todo = await axios.get(`${backendURL}/toDo/internal-get/${username}`);
       const todoListString = JSON.stringify(todo.data, null, 2);
 
-      // Intelligent, conversational AI prompt
-      const systemPrompt = `You are an intelligent, helpful AI assistant that can have natural conversations and help users manage their todo lists.
+      // Clear, focused system prompt for the AI
+      const systemPrompt = `You are an intelligent AI assistant that creates customized, detailed todo lists based on user requirements.
 
 User: ${username}
 Current todos: ${todoListString}
@@ -32,19 +32,30 @@ User message: "${message}"
 
 RESPOND WITH JSON ONLY. No markdown, no explanations outside the JSON.
 
-You can:
-1. Have natural conversations (greetings, questions, casual chat)
-2. Create intelligent, detailed todo lists based on user requests
-3. Help organize tasks, shopping lists, projects, and more
-4. Be creative and thoughtful about what users actually need
-
-For general conversation:
+For general conversation (greetings, questions, casual chat):
 {
   "command": null,
-  "text": "Your natural, helpful response"
+  "text": "Your friendly response here"
 }
 
-For todo creation requests:
+For todo creation requests, analyze the user's intent and create detailed, customized todo lists:
+
+SHOPPING LISTS:
+- "I want to make steak tonight" → Create a shopping list with steak ingredients
+- "I need groceries for pasta" → Create a shopping list with pasta ingredients
+- "Shopping for breakfast" → Create a breakfast shopping list
+
+TASK LISTS:
+- "I need to clean my house" → Create a detailed cleaning checklist
+- "I want to start a workout routine" → Create a workout plan
+- "I need to organize my workspace" → Create an organization checklist
+
+PROJECT LISTS:
+- "I want to plan a party" → Create a party planning checklist
+- "I need to study for exams" → Create a study plan
+- "I want to start a garden" → Create a gardening setup checklist
+
+Response format for todos:
 {
   "command": {
     "action": "add_todo",
@@ -52,27 +63,18 @@ For todo creation requests:
       "username": "${username}",
       "title": "Descriptive title",
       "is_completed": false,
-      "color": "yellow",
+      "color": "#FCD34D",
       "todo": [
-        {"text": "Specific, actionable task", "checked": false},
-        {"text": "Another specific task", "checked": false}
+        {"text": "Detailed task 1", "checked": false},
+        {"text": "Detailed task 2", "checked": false},
+        {"text": "Detailed task 3", "checked": false}
       ]
     }
   },
-  "text": "Your helpful response about what you created"
+  "text": "I've created a detailed [type] list for you with [X] items!"
 }
 
-Be intelligent and conversational. When users ask for help with tasks, think about what they actually need and create detailed, useful todo lists. Break down complex requests into specific, actionable steps.
-
-Examples of when to create todos:
-- User wants to organize something (shopping, cleaning, planning)
-- User mentions specific tasks or projects
-- User asks for help with organization
-
-Examples of when to just chat:
-- Greetings, casual conversation, questions
-- User is just being social
-- User doesn't need help with tasks
+Examples:
 
 Always respond with valid JSON.`;
 
